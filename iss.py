@@ -25,10 +25,12 @@ def current_cords():
     for the ISS."""
     r = requests.get(public_api + '/iss-now.json')
     r.raise_for_status()
+    time_stamp = r.json()["timestamp"]
+    time_stamp_readable = time.ctime(time_stamp)
     location = r.json()["iss_position"]
     latitude = float(location["latitude"])
     longitude = float(location["longitude"])
-    return latitude, longitude
+    return latitude, longitude, time_stamp_readable
 
 
 def world_map(latitude, longitude):
@@ -75,10 +77,12 @@ def main():
         print("Astronaut: {} \nSpacecraft: {}\n".format(
             astro["name"], astro["craft"]))
 
-    # Lat and Long being passed from current_cords to print out where the ISS is.
-    latitude, longitude = current_cords()
-    print("Current ISS coordinates: \nLatitude = {}\nLongitude = {} ".format(
-        latitude, longitude))
+    # Lat and Long being passed from current_cords
+    # to print out where the ISS is.
+    latitude, longitude, time_stamp_readable = current_cords()
+    print("Current ISS coordinates: \nLat={}\nLon={} \nTimestamp={} "
+          .format(
+              latitude, longitude, time_stamp_readable))
 
     # create a display of ISS on world_map
     earth_map = None
